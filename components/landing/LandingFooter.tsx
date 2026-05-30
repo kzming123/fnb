@@ -41,12 +41,13 @@ export function FinalCta() {
             <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
               <DemoButton label={c.hero.ctaDemo} tone="light" size="lg" />
               <a
-                href={contactHref('F&B Smart Ledger — pricing enquiry')}
+                href={contactHref('F&B Smart Ledger — founding price enquiry')}
                 className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-white/20 px-7 text-base font-semibold text-slate-100 transition-all duration-150 hover:bg-white/10 active:scale-[0.98]"
               >
                 {c.hero.ctaPrice} <ArrowUpRight size={16} />
               </a>
             </div>
+            <p className="mt-4 text-xs text-slate-400">{c.final.micro}</p>
           </div>
         </div>
       </div>

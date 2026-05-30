@@ -26,6 +26,12 @@ export function LandingNav() {
 
         {/* Right */}
         <div className="flex items-center gap-2 sm:gap-3">
+          <a
+            href="#pricing"
+            className="hidden rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 transition-colors hover:bg-amber-100 md:inline-flex"
+          >
+            {c.nav.offer}
+          </a>
           <LanguageSwitcher />
           <Link
             href="/login"
