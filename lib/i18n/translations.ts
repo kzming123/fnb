@@ -75,6 +75,7 @@ const en = {
   dashboard_top_supplier: 'Top Supplier Spend',
   dashboard_platform_commission: 'Platform Commission',
   dashboard_excl_cogs: 'Excl. food cost',
+  dashboard_incl_cogs: 'Incl. food cost',
   dashboard_of_revenue: 'of revenue',
 
   // Dashboard — section titles
@@ -500,6 +501,13 @@ const en = {
   rm: 'RM',
   required: 'Required',
   optional: 'Optional',
+
+  // ── Form validation ─────────────────────────────────────────────────────────
+  validation_amount_positive: 'Amount must be greater than 0',
+  validation_amount_negative: 'Amount cannot be negative',
+  validation_date_required:   'Please select a date',
+  validation_category_required: 'Please select a category',
+  validation_sales_min:       'Enter at least one sales amount greater than 0',
   success: 'Saved successfully',
   error: 'Something went wrong. Please try again.',
   change: 'Change',
@@ -699,6 +707,7 @@ const zhCN: Record<keyof typeof en, string> = {
   dashboard_top_supplier: '最大供应商支出',
   dashboard_platform_commission: '平台佣金',
   dashboard_excl_cogs: '不含食材成本',
+  dashboard_incl_cogs: '包含食材成本',
   dashboard_of_revenue: '占营业额',
 
   // Dashboard — section titles
@@ -1124,6 +1133,14 @@ const zhCN: Record<keyof typeof en, string> = {
   rm: 'RM',
   required: '必填',
   optional: '可选',
+
+  // ── Form validation ─────────────────────────────────────────────────────────
+  validation_amount_positive: '金额必须大于 0',
+  validation_amount_negative: '金额不能为负数',
+  validation_date_required:   '请选择日期',
+  validation_category_required: '请选择类别',
+  validation_sales_min:       '请至少输入一项大于 0 的营业额',
+
   success: '保存成功',
   error: '操作失败，请重试。',
   change: '修改',

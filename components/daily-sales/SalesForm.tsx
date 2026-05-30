@@ -94,8 +94,12 @@ export function SalesForm({ onClose, onSubmit, initialEntry }: SalesFormProps) {
     initialEntry ? entryToForm(initialEntry) : { ...blankForm, date: today() }
   )
   const [submitting, setSubmitting] = useState(false)
+  const [formError,  setFormError]  = useState('')
 
-  const set = (key: string, val: string) => setForm((f) => ({ ...f, [key]: val }))
+  const set = (key: string, val: string) => {
+    setForm((f) => ({ ...f, [key]: val }))
+    setFormError('')
+  }
 
   // Auto-computed totals
   const totalSales =
@@ -110,7 +114,28 @@ export function SalesForm({ onClose, onSubmit, initialEntry }: SalesFormProps) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!hasAnySales) return
+    setFormError('')
+
+    // ── Validation — block bad input before it reaches Supabase ──────────────
+    // Reject negatives in any channel, payment, or commission field.
+    const numericValues = [
+      form.dineIn, form.takeaway, form.grabFood, form.foodpanda, form.shopeeFood,
+      form.cash, form.card, form.eWallet,
+      form.grabFoodCommission, form.foodpandaCommission, form.shopeeCommission,
+    ]
+    if (numericValues.some(v => v.trim() !== '' && parseFloat(v) < 0)) {
+      setFormError(t('validation_amount_negative'))
+      return
+    }
+    if (!form.date) {
+      setFormError(t('validation_date_required'))
+      return
+    }
+    if (!hasAnySales) {
+      setFormError(t('validation_sales_min'))
+      return
+    }
+
     setSubmitting(true)
     try {
       // In edit mode, preserve the original ID so updateDailySalesById can target it
@@ -393,6 +418,13 @@ export function SalesForm({ onClose, onSubmit, initialEntry }: SalesFormProps) {
                 )
               })}
             </div>
+          </div>
+        )}
+
+        {/* Validation error */}
+        {formError && (
+          <div className="mx-5 mb-1 rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-xs font-medium text-red-700">
+            {formError}
           </div>
         )}
 

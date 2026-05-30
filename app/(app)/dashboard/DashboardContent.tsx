@@ -26,22 +26,21 @@ import { useCurrentBusiness }   from '@/lib/supabase/useCurrentBusiness'
 import {
   fetchTodaySales,
   fetchSalesByDate,
-  fetchMonthlySalesBreakdown,
-  fetchMonthlyCogs,
-  fetchMonthlyOpex,
   fetchMonthlyTrend,
-  fetchSupplierSpendTotals,
   fetchPlatformSales,
   fetchRecentExpenses,
   type TrendPoint,
-  type CogsByCategory,
-  type OpexByCategory,
-  type SupplierSpend,
   type PlatformSalesData,
   type RecentExpense,
   type TodaySalesData,
-  type MonthlySalesData,
 } from '@/lib/supabase/queries/pnl'
+
+// Single source of truth for all P&L math — the SAME calculator the P&L Report
+// uses (lib/finance/pnl-calculator.ts → calculatePnL). This guarantees the
+// Dashboard and the P&L Report never disagree, and that invoice_scan expenses
+// are not double-counted (the calculator folds them into COGS, not OpEx).
+import { fetchAndCalculatePnL } from '@/lib/finance/pnl-calculator'
+import type { PnLReport } from '@/types/pnl'
 
 import { fetchInvoiceHistory }  from '@/lib/supabase/queries/invoices'
 import type { Transaction }     from '@/lib/mock-data/dashboard'
@@ -68,14 +67,6 @@ const OPEX_COLORS: Record<string, string> = {
   others:              '#94a3b8',
 }
 
-const ZH_CATEGORY: Record<string, string> = {
-  meat: '肉类', seafood: '海鲜', vegetables: '蔬菜', dry_goods: '干货',
-  beverages: '饮料', packaging: '包装材料', sauce_seasoning: '酱料调料',
-  rent: '租金', salaries: '薪资', utilities: '水电费', marketing: '营销',
-  repairs: '维修', cleaning: '清洁', pos_software: 'POS系统',
-  delivery_commission: '外卖佣金', others: '其他',
-}
-
 // ─── Date helpers ──────────────────────────────────────────────────────────────
 
 function currentMonth(): string {
@@ -99,19 +90,15 @@ function sixMonthsAgo(month: string): string {
 // ─── Internal data shape ───────────────────────────────────────────────────────
 
 type RawData = {
-  businessName:  string
-  today:         TodaySalesData | null
+  businessName:   string
+  today:          TodaySalesData | null
   yesterdaySales: number
-  current:       MonthlySalesData
-  currentCogs:   CogsByCategory[]
-  currentOpex:   OpexByCategory[]
-  last:          MonthlySalesData
-  lastCogs:      CogsByCategory[]
-  lastOpex:      OpexByCategory[]
-  trend:         TrendPoint[]
-  suppliers:     SupplierSpend[]   // current-month supplier spend
-  lastSuppliers: SupplierSpend[]   // last-month supplier spend for trend
-  platforms:     PlatformSalesData[]
+  // Fully-calculated P&L for the current + previous month (same engine as the
+  // P&L Report). All KPI cards derive from these, so the two pages always agree.
+  current:        PnLReport
+  last:           PnLReport
+  trend:          TrendPoint[]
+  platforms:      PlatformSalesData[]
   recentExpenses: RecentExpense[]
   recentInvoices: Awaited<ReturnType<typeof fetchInvoiceHistory>>
 }
@@ -119,40 +106,52 @@ type RawData = {
 // ─── Derived KPIs (computed from RawData) ─────────────────────────────────────
 
 function derive(d: RawData) {
+  const c = d.current   // current-month P&L report
+  const l = d.last      // previous-month P&L report
+
   const todaySales = d.today?.totalRevenue ?? 0
   const yest       = d.yesterdaySales
   const todayVsYesterday = yest > 0 ? ((todaySales - yest) / yest) * 100 : 0
 
-  const mtdRevenue  = d.current.totalRevenue
-  const mtdCogs     = d.currentCogs.reduce((s, c) => s + c.totalAmount, 0)
-  const mtdOpex     = d.currentOpex.reduce((s, c) => s + c.totalAmount, 0)
-  const grossProfit = mtdRevenue - mtdCogs
-  const netProfit   = grossProfit - mtdOpex
-  const totalExpenses = mtdCogs + mtdOpex
+  // ── Core P&L numbers — taken straight from the calculator ────────────────────
+  // No bespoke COGS/OpEx math here anymore: every figure comes from the same
+  // engine as the P&L Report, so invoice_scan expenses can't be double-counted
+  // and manual food expenses are correctly classified as COGS.
+  const mtdRevenue  = c.totalRevenue
+  const mtdCogs     = c.totalCogs
+  const mtdOpex     = c.operatingExpenses
+  const grossProfit = c.grossProfit
+  const netProfit   = c.netProfit
+  // Total Expenses = COGS + Operating Expenses (food cost IS included).
+  const totalExpenses = c.totalCogs + c.operatingExpenses
 
-  const lastRev         = d.last.totalRevenue
-  const lastCogs        = d.lastCogs.reduce((s, c) => s + c.totalAmount, 0)
-  const lastOpex        = d.lastOpex.reduce((s, c) => s + c.totalAmount, 0)
-  const lastGrossProfit = lastRev - lastCogs
-  const lastNetProfit   = lastGrossProfit - lastOpex
-  const lastTotalExp    = lastCogs + lastOpex
+  const lastRev         = l.totalRevenue
+  const lastGrossProfit = l.grossProfit
+  const lastNetProfit   = l.netProfit
+  const lastTotalExp    = l.totalCogs + l.operatingExpenses
 
   const pct = (cur: number, prev: number) =>
     prev > 0 ? ((cur - prev) / prev) * 100 : undefined
 
-  const foodCostPct     = mtdRevenue > 0 ? (mtdCogs / mtdRevenue) * 100 : 0
-  const lastFoodCostPct = lastRev > 0 ? (lastCogs / lastRev) * 100 : 0
-  const grossMarginPct  = mtdRevenue > 0 ? (grossProfit / mtdRevenue) * 100 : 0
-  const netMarginPct    = mtdRevenue > 0 ? (netProfit / mtdRevenue) * 100 : 0
+  const foodCostPct     = c.foodCostPercent
+  const lastFoodCostPct = l.foodCostPercent
+  const grossMarginPct  = c.grossMarginPercent
+  const netMarginPct    = c.netMarginPercent
 
-  const topSupplier  = d.suppliers[0] ?? null
-  const lastTopSpend = d.lastSuppliers[0]?.totalAmount ?? 0
+  // Top supplier comes from the report too (same period/logic), so the
+  // Dashboard "Top Supplier" card matches the P&L Report exactly.
+  const topSupplier  = c.topSupplier
+  const lastTopSpend = l.topSupplier?.totalSpend ?? 0
+  const topSupplierGrowth = pct(topSupplier?.totalSpend ?? 0, lastTopSpend)
+
   const totalPlatformComm   = d.platforms.reduce((s, p) => s + p.effectiveCommission, 0)
   const totalPlatformNet    = d.platforms.reduce((s, p) => s + p.netReceived,         0)
   const platformCommPct     = mtdRevenue > 0 ? (totalPlatformComm / mtdRevenue) * 100 : 0
   const anyPlatformEstimated = d.platforms.some(p => p.isEstimated)
 
-  // Build expense category chart data: COGS lump + individual opex items
+  // Build expense category chart data: COGS lump + individual opex items.
+  // opexItems already excludes food-cost categories (those live inside COGS),
+  // so nothing is shown twice.
   const expChartItems: ExpenseCategoryItem[] = []
   if (mtdCogs > 0) {
     expChartItems.push({
@@ -163,12 +162,12 @@ function derive(d: RawData) {
       pct:    0,
     })
   }
-  for (const item of d.currentOpex) {
+  for (const item of c.opexItems) {
     expChartItems.push({
-      name:   item.categoryName,
-      nameZh: ZH_CATEGORY[item.categoryKind] ?? item.categoryName,
-      amount: item.totalAmount,
-      color:  OPEX_COLORS[item.categoryKind] ?? '#94a3b8',
+      name:   item.label,
+      nameZh: item.labelZh,
+      amount: item.amount,
+      color:  OPEX_COLORS[item.category] ?? '#94a3b8',
       pct:    0,
     })
   }
@@ -199,12 +198,10 @@ function derive(d: RawData) {
     })),
   ].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10)
 
-  const topSupplierGrowth = pct(topSupplier?.totalAmount ?? 0, lastTopSpend)
-
   return {
     todaySales, todayVsYesterday,
     mtdRevenue, mtdCogs, mtdOpex, grossProfit, netProfit, totalExpenses,
-    lastRev, lastCogs, lastOpex, lastGrossProfit, lastNetProfit, lastTotalExp,
+    lastRev, lastGrossProfit, lastNetProfit, lastTotalExp,
     foodCostPct, lastFoodCostPct, grossMarginPct, netMarginPct,
     topSupplier, topSupplierGrowth,
     totalPlatformComm, totalPlatformNet, platformCommPct, anyPlatformEstimated,
@@ -311,23 +308,16 @@ export function DashboardContent() {
 
         const [
           todayData, yesterdaySales,
-          current, currentCogs, currentOpex,
-          lastData, lastCogs, lastOpex,
-          trend,
-          suppliers, lastSuppliers, platforms,
+          currentReport, lastReport,
+          trend, platforms,
           recentExpenses, recentInvoices,
         ] = await Promise.all([
           fetchTodaySales(businessId),
           fetchSalesByDate(businessId, yesterday),
-          fetchMonthlySalesBreakdown(businessId, month),
-          fetchMonthlyCogs(businessId, month),
-          fetchMonthlyOpex(businessId, month),
-          fetchMonthlySalesBreakdown(businessId, last),
-          fetchMonthlyCogs(businessId, last),
-          fetchMonthlyOpex(businessId, last),
+          // Same calculator the P&L Report uses — one source of truth.
+          fetchAndCalculatePnL(businessId, month),
+          fetchAndCalculatePnL(businessId, last),
           fetchMonthlyTrend(businessId, sixAgo, month),
-          fetchSupplierSpendTotals(businessId, month, month),      // current month only
-          fetchSupplierSpendTotals(businessId, last, last),        // last month for trend
           fetchPlatformSales(businessId, month),
           fetchRecentExpenses(businessId, 5),
           fetchInvoiceHistory(businessId),
@@ -339,9 +329,9 @@ export function DashboardContent() {
           businessName: businessName || 'My Business',
           today: todayData,
           yesterdaySales,
-          current, currentCogs, currentOpex,
-          last: lastData, lastCogs, lastOpex,
-          trend, suppliers, lastSuppliers, platforms,
+          current: currentReport,
+          last:    lastReport,
+          trend, platforms,
           recentExpenses,
           recentInvoices: recentInvoices.slice(0, 5),
         })
@@ -399,7 +389,7 @@ export function DashboardContent() {
   // Top supplier — real users with no confirmed invoices see '—', not demo data
   const topSupplierName    = isDemo ? 'Premium Meats Trading'
     : (kpi?.topSupplier?.supplierName ?? '—')
-  const topSupplierSpend   = isDemo ? 9_200.00  : (kpi?.topSupplier?.totalAmount ?? 0)
+  const topSupplierSpend   = isDemo ? 9_200.00  : (kpi?.topSupplier?.totalSpend ?? 0)
   const topSupplierGrowthVal = isDemo ? undefined : kpi?.topSupplierGrowth
   // Platform commission
   const totalPlatformComm  = isDemo ? 3_850.00 : (kpi?.totalPlatformComm ?? 0)
@@ -541,7 +531,7 @@ export function DashboardContent() {
             value={formatCurrency(totalExpenses)}
             trend={expensesGrowth}
             trendLabel={t('dashboard_vs_last_month')}
-            subtitle={t('dashboard_excl_cogs')}
+            subtitle={t('dashboard_incl_cogs')}
             accent="red"
             invertTrend
             icon={<Receipt size={17} />}

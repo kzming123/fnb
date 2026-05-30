@@ -42,10 +42,13 @@ Copy `.env.example` to `.env.local` for local development. For production, add t
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ✅ Yes | Supabase → Project Settings → API → `anon` `public` key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Recommended | Supabase → Project Settings → API → `service_role` key |
 | `NEXT_PUBLIC_APP_URL` | ✅ Yes | Your Vercel app URL (e.g. `https://your-app.vercel.app`) |
+| `USE_MOCK_AI` | Optional | `true` (always mock) or `false`. Defaults to mock when unset and no key. |
 | `OPENAI_API_KEY` | Optional | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) |
 
 > **Security note:** `NEXT_PUBLIC_*` variables are safe to expose — they are visible in the browser.
-> `SUPABASE_SERVICE_ROLE_KEY` and `OPENAI_API_KEY` are server-only secrets — never put them in a `NEXT_PUBLIC_` variable.
+> `SUPABASE_SERVICE_ROLE_KEY`, `USE_MOCK_AI`, and `OPENAI_API_KEY` are server-only — never put them in a `NEXT_PUBLIC_` variable.
+>
+> **Demo tip:** Set `USE_MOCK_AI=true` for client demos. The invoice scanner then always returns the built-in sample invoice — predictable, instant, and free — even if an `OPENAI_API_KEY` happens to be configured.
 
 ---
 
@@ -145,7 +148,7 @@ TO authenticated
 USING (bucket_id = 'invoice-files' AND auth.uid()::text = (storage.foldername(name))[1]);
 ```
 
-Apply the same pattern to `expense-attachments` (replace `invoice-files` with `expense-attachments`).
+Apply the same pattern to `   ` (replace `invoice-files` with `expense-attachments`).
 
 > **Tip:** Run all three statements as one query in the SQL Editor for each bucket.
 
@@ -214,6 +217,7 @@ Before clicking **Deploy**, click **Environment Variables** and add each one:
 | `SUPABASE_SERVICE_ROLE_KEY` | Your Supabase service role key | Production, Preview |
 | `NEXT_PUBLIC_APP_URL` | `https://your-app.vercel.app` | Production |
 | `NEXT_PUBLIC_APP_URL` | `http://localhost:3000` | Development |
+| `USE_MOCK_AI` | `true` for demos, `false` for real AI | Production, Preview |
 | `OPENAI_API_KEY` | `sk-...` (optional) | Production, Preview |
 
 > After the first deploy, if you add or change an environment variable in Vercel, you must **Redeploy** for the change to take effect.
@@ -240,19 +244,23 @@ Before clicking **Deploy**, click **Environment Variables** and add each one:
 
 ### How it works
 
-The invoice scanner has three modes:
+The invoice scanner chooses its mode server-side, in this order:
 
-| Mode | When active | What happens |
-|---|---|---|
-| **Mock mode** | No API key set | Returns realistic sample data after a short delay. Full UI flow works — upload, review, save all function normally. |
-| **OpenAI GPT-4o** | `OPENAI_API_KEY` is set | Sends the invoice image to OpenAI Vision API for real extraction. |
-| **Anthropic Claude** | Requires code change | Available but not enabled by default. See `lib/ai/invoice-extractor.ts`. |
+| Priority | Condition | Mode | What happens |
+|---|---|---|---|
+| 1 | `USE_MOCK_AI=true` | **Mock (forced)** | Always returns the built-in sample invoice, even if `OPENAI_API_KEY` is set. Best for demos. |
+| 2 | `USE_MOCK_AI` not `true` **and** `OPENAI_API_KEY` set | **OpenAI GPT-4o** | Sends the invoice image/PDF to OpenAI Vision for real extraction. |
+| 3 | `USE_MOCK_AI` not `true` **and** no key | **Mock (fallback)** | Falls back to the sample invoice and logs a server-side warning. |
+| — | (alternative) | **Anthropic Claude** | Available but not enabled by default. See `lib/ai/invoice-extractor.ts`. |
+
+The key and the `USE_MOCK_AI` flag are server-only — neither is ever sent to the browser.
 
 ### Enabling real AI extraction (OpenAI)
 
 1. Get an API key from [platform.openai.com/api-keys](https://platform.openai.com/api-keys).
 2. Add `OPENAI_API_KEY=sk-...` to your Vercel environment variables.
-3. Redeploy.
+3. Set `USE_MOCK_AI=false` (or remove it) so real extraction is used.
+4. Redeploy.
 
 ### What happens if the API key is missing
 

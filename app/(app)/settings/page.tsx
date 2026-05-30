@@ -97,7 +97,15 @@ export default function SettingsPage() {
   const [saved,          setSaved]          = useState(false)
   const [saveError,      setSaveError]      = useState('')
   // When true, bypass ALL loading states and render the page immediately.
-  // Prevents infinite spinner when Supabase or bizLoading never resolves.
+  //
+  // WHY THIS EXISTS (intentional safety net, not a band-aid for a logic bug):
+  // useCurrentBusiness() resolves loading=false in every branch, so the only way
+  // the page can spin forever is if supabase.auth.getUser() never settles — which
+  // can happen on serverless/edge when the auth network call stalls (observed on
+  // Vercel). Rather than trap the owner on a blank spinner, we force-render after
+  // 4 s. The real data still populates later via the load() effect once (or if)
+  // the queries resolve, so nothing is lost — worst case the fields briefly show
+  // empty and then fill in. Do not remove without a verified fix for the stall.
   const [hardTimedOut,   setHardTimedOut]   = useState(false)
 
   // ── Hard timeout — never spin forever ────────────────────────────────────

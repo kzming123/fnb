@@ -279,8 +279,22 @@ export default function ExpensesPage() {
   }, [])
 
   async function handleSave() {
-    if (!form.amount || parseFloat(form.amount) <= 0) {
-      setFormError(t('required'))
+    // ── Validation — block bad input before it reaches Supabase ──────────────
+    const amt = parseFloat(form.amount)
+    if (!form.date) {
+      setFormError(t('validation_date_required'))
+      return
+    }
+    if (!form.categoryKind) {
+      setFormError(t('validation_category_required'))
+      return
+    }
+    if (form.amount.trim() !== '' && amt < 0) {
+      setFormError(t('validation_amount_negative'))
+      return
+    }
+    if (!form.amount || Number.isNaN(amt) || amt <= 0) {
+      setFormError(t('validation_amount_positive'))
       return
     }
     const catId = categoryIdFor(form.categoryKind)

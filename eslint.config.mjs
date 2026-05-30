@@ -8,6 +8,17 @@ const __dirname = dirname(__filename)
 const compat = new FlatCompat({ baseDirectory: __dirname })
 
 const config = [
+  // Next 16 removed `next lint`, so we run the ESLint CLI directly (`eslint .`).
+  // These ignores replace the directories `next lint` used to skip automatically.
+  {
+    ignores: [
+      '.next/**',
+      'out/**',
+      'build/**',
+      'node_modules/**',
+      'next-env.d.ts',
+    ],
+  },
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
     rules: {

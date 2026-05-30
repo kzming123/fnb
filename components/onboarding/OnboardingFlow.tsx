@@ -156,7 +156,8 @@ export function OnboardingFlow({ businessId, initialName, initialType, initialPh
   function toggleChannel(v: string) {
     setChannels(prev => {
       const next = new Set(prev)
-      next.has(v) ? next.delete(v) : next.add(v)
+      if (next.has(v)) next.delete(v)
+      else next.add(v)
       return next
     })
   }

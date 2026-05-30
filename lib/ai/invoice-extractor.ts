@@ -97,7 +97,7 @@ const MOCK_RESULT: Omit<InvoiceExtraction, '_extractedAt'> = {
 
 // ─── Mock extractor ───────────────────────────────────────────────────────────
 // Simulates ~2 s of processing so the scanning animation plays.
-// Used when no OPENAI_API_KEY (or ANTHROPIC_API_KEY) is set.
+// Used when USE_MOCK_AI=true, or when no OPENAI_API_KEY is configured.
 
 async function mockExtract(_input: ExtractionInput): Promise<InvoiceExtraction> {
   await new Promise(r => setTimeout(r, 2000))
@@ -349,10 +349,14 @@ async function openAiExtract(input: ExtractionInput): Promise<InvoiceExtraction>
 /**
  * Extract structured data from an invoice image or PDF.
  *
- * Routing logic (checked server-side, keys never reach the client):
- *   OPENAI_API_KEY set     → real extraction via GPT-4o Vision
- *   ANTHROPIC_API_KEY set  → (add else-if branch below when ready)
- *   Neither key set        → mock extraction after ~2 s delay
+ * Routing logic (all checked server-side — keys never reach the client):
+ *   USE_MOCK_AI=true                    → ALWAYS mock, even if a key is set
+ *   USE_MOCK_AI!=true + OPENAI_API_KEY  → real extraction via GPT-4o Vision
+ *   USE_MOCK_AI!=true + no key          → graceful mock fallback + dev warning
+ *
+ * USE_MOCK_AI lets you keep client demos predictable and free even when a real
+ * key is configured on the deployment. It is a server-only variable (NOT
+ * prefixed NEXT_PUBLIC), so neither it nor the API key is exposed to the browser.
  *
  * The function signature is stable — callers never change when the backend swaps.
  */
@@ -360,17 +364,27 @@ export async function extractInvoice(input: ExtractionInput): Promise<InvoiceExt
   const validationError = validateInput(input)
   if (validationError) throw new Error(validationError)
 
-  // ── REAL AI PATH — activated by setting OPENAI_API_KEY in .env.local ──────
-  if (process.env.OPENAI_API_KEY) {
+  // Explicit mock switch — forces the mock extractor regardless of API keys.
+  const forceMock = process.env.USE_MOCK_AI === 'true'
+
+  // ── REAL AI PATH — mock not forced AND a key is configured ────────────────
+  if (!forceMock && process.env.OPENAI_API_KEY) {
     // REAL AI MODEL CALL ↓  (see openAiExtract above for full implementation)
     return openAiExtract(input)
+
+    // Add Anthropic support here when ANTHROPIC_API_KEY is configured:
+    // if (process.env.ANTHROPIC_API_KEY) return anthropicExtract(input)
   }
 
-  // Add Anthropic support here when ANTHROPIC_API_KEY is configured:
-  // if (process.env.ANTHROPIC_API_KEY) {
-  //   return anthropicExtract(input)
-  // }
+  // ── GRACEFUL FALLBACK — real AI was wanted but no key is available ─────────
+  if (!forceMock && !process.env.OPENAI_API_KEY) {
+    console.warn(
+      '[invoice-extractor] USE_MOCK_AI is not "true" but OPENAI_API_KEY is missing — ' +
+      'falling back to MOCK extraction. Set OPENAI_API_KEY to enable real AI, ' +
+      'or set USE_MOCK_AI=true to silence this warning.'
+    )
+  }
 
-  // ── MOCK PATH — used in development when no API key is configured ─────────
+  // ── MOCK PATH — USE_MOCK_AI=true, or no key configured ────────────────────
   return mockExtract(input)
 }
