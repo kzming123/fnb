@@ -97,14 +97,21 @@ export default function SettingsPage() {
   const [saved,          setSaved]          = useState(false)
   const [saveError,      setSaveError]      = useState('')
 
+  // ── Hard timeout — never spin forever ────────────────────────────────────
+  // If Supabase is slow or env vars are missing, render the page after 5 s.
+  useEffect(() => {
+    const t = setTimeout(() => setProfileLoading(false), 5000)
+    return () => clearTimeout(t)
+  }, [])
+
   // ── Load real data from Supabase ──────────────────────────────────────────
   useEffect(() => {
-    // Don't block on missing IDs — just stop loading so the page renders
-    if (!bizLoading && (!businessId || !userId)) {
+    if (bizLoading) return
+    // No business/user — stop spinner immediately so the page renders
+    if (!businessId || !userId) {
       setProfileLoading(false)
       return
     }
-    if (bizLoading) return
 
     async function load() {
       try {
@@ -130,7 +137,7 @@ export default function SettingsPage() {
           address:      (bizRes.data?.address as string) ?? '',
         })
       } catch {
-        // Data load failed — still stop the spinner so the page is usable
+        // Data load failed — page still renders with empty fields
       } finally {
         setProfileLoading(false)
       }
