@@ -96,12 +96,18 @@ export default function SettingsPage() {
   const [saving,         setSaving]         = useState(false)
   const [saved,          setSaved]          = useState(false)
   const [saveError,      setSaveError]      = useState('')
+  // When true, bypass ALL loading states and render the page immediately.
+  // Prevents infinite spinner when Supabase or bizLoading never resolves.
+  const [hardTimedOut,   setHardTimedOut]   = useState(false)
 
   // ── Hard timeout — never spin forever ────────────────────────────────────
-  // If Supabase is slow or env vars are missing, render the page after 5 s.
+  // Fires after 4 s regardless of bizLoading or profileLoading state.
   useEffect(() => {
-    const t = setTimeout(() => setProfileLoading(false), 5000)
-    return () => clearTimeout(t)
+    const timer = setTimeout(() => {
+      setHardTimedOut(true)
+      setProfileLoading(false)
+    }, 4000)
+    return () => clearTimeout(timer)
   }, [])
 
   // ── Load real data from Supabase ──────────────────────────────────────────
@@ -201,7 +207,7 @@ export default function SettingsPage() {
     { value: 'other',         labelKey: 'settings_type_other'         as TranslationKey },
   ]
 
-  if (bizLoading || profileLoading) {
+  if (!hardTimedOut && (bizLoading || profileLoading)) {
     return (
       <div className="flex items-center justify-center py-16 text-gray-400">
         <Loader2 size={20} className="animate-spin mr-2" />
