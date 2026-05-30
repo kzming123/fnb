@@ -65,7 +65,7 @@ export function ConfirmDialog({
 
       {/* Dialog card */}
       <div className={cn(
-        'relative z-10 w-full max-w-sm rounded-2xl bg-white shadow-2xl ring-1 ring-gray-100',
+        'relative z-10 w-full max-w-sm rounded-2xl bg-white shadow-2xl border border-gray-100',
         'animate-in zoom-in-95 fade-in duration-200',
       )}>
         {/* Close button */}

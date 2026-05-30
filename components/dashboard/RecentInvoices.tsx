@@ -19,7 +19,7 @@ export function RecentInvoices() {
   const recent = mockInvoices.slice(0, 5)
 
   return (
-    <div className="rounded-xl bg-white shadow-card border border-gray-100">
+    <div className="rounded-2xl bg-white shadow-card border border-gray-100">
       <div className="flex items-center justify-between border-b border-gray-50 px-5 py-4">
         <h3 className="text-sm font-semibold text-gray-800">{t('dashboard_recent_invoices')}</h3>
         <Link

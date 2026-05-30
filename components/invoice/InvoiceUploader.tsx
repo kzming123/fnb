@@ -128,7 +128,7 @@ export function InvoiceUploader({ onScan }: InvoiceUploaderProps) {
   return (
     <div className="flex flex-col gap-4 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-6">
       {/* File info strip */}
-      <div className="flex items-center gap-4 rounded-xl bg-white px-4 py-3 shadow-card">
+      <div className="flex items-center gap-4 rounded-2xl bg-white px-4 py-3 shadow-card">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gray-50">
           {fileIcon(file.type)}
         </div>

@@ -72,7 +72,7 @@ function ScanHistoryList({ records, t }: { records: ScanRecord[]; t: (k: Transla
   }
 
   return (
-    <div className="rounded-2xl bg-white ring-1 ring-gray-100 shadow-card overflow-hidden">
+    <div className="rounded-2xl bg-white border border-gray-100 shadow-card overflow-hidden">
       <div className="flex items-center justify-between border-b border-gray-50 px-5 py-4">
         <div>
           <h3 className="text-sm font-semibold text-gray-800">{t('invoice_history_title')}</h3>
@@ -283,7 +283,7 @@ export default function InvoiceScannerPage() {
             { step: '2', icon: '🤖', title: 'AI Reads', sub: t('invoice_scanning') },
             { step: '3', icon: '✅', title: 'Verify & Save', sub: t('invoice_save_expense') },
           ].map((s) => (
-            <div key={s.step} className="flex flex-col gap-2 rounded-xl bg-white p-4 ring-1 ring-gray-100 shadow-card text-center">
+            <div key={s.step} className="flex flex-col gap-2 rounded-2xl bg-white p-4 border border-gray-100 shadow-card text-center">
               <span className="text-2xl">{s.icon}</span>
               <p className="text-xs font-bold text-gray-700">{s.title}</p>
               <p className="text-[11px] text-gray-400">{s.sub}</p>

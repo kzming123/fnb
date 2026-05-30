@@ -29,6 +29,16 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Respect users who prefer reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
   body {
     @apply bg-gray-50 text-gray-900;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -68,7 +78,7 @@
 
   /* ── Cards ── */
   .card {
-    @apply rounded-xl bg-white border border-gray-100 shadow-card;
+    @apply rounded-2xl bg-white border border-gray-100 shadow-card;
   }
   .card-hover {
     @apply transition-shadow duration-200 hover:shadow-card-hover;

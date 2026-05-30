@@ -155,14 +155,14 @@ export function SalesTable({ entries, onEdit, onDelete }: SalesTableProps) {
 
   if (entries.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl bg-white py-20 ring-1 ring-gray-100 shadow-card">
+      <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-20 border border-gray-100 shadow-card">
         <p className="text-sm text-gray-400">{t('sales_no_entries')}</p>
       </div>
     )
   }
 
   return (
-    <div className="rounded-xl bg-white ring-1 ring-gray-100 shadow-card overflow-hidden">
+    <div className="rounded-2xl bg-white border border-gray-100 shadow-card overflow-hidden">
       <div className="overflow-x-auto table-scroll">
         <table className="w-full text-xs min-w-[780px]">
           <thead>

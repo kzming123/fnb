@@ -656,7 +656,7 @@ export default function ExpensesPage() {
       />
 
       {/* ── Table ────────────────────────────────────────────────────────── */}
-      <div className="rounded-2xl bg-white ring-1 ring-gray-100 shadow-card overflow-hidden">
+      <div className="rounded-2xl bg-white border border-gray-100 shadow-card overflow-hidden">
         {filtered.length === 0 ? (
           <EmptyState
             icon={<Receipt size={24} />}

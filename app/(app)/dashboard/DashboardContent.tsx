@@ -263,11 +263,44 @@ function QuickAction({
 
 function SectionHeader({ title, sub }: { title: string; sub?: string }) {
   return (
-    <div className="flex items-baseline justify-between">
+    <div className="flex items-center gap-2.5">
+      <span className="h-4 w-1 shrink-0 rounded-full bg-indigo-500" aria-hidden />
       <div>
         <h2 className="text-sm font-bold text-gray-800">{title}</h2>
         {sub && <p className="mt-0.5 text-xs text-gray-400">{sub}</p>}
       </div>
+    </div>
+  )
+}
+
+// ─── Hero stat (the two big numbers in the dark banner) ─────────────────────────
+
+function HeroStat({
+  label, value, delta, deltaLabel, firstMonthLabel,
+}: {
+  label: string
+  value: string
+  delta?: number
+  deltaLabel: string
+  firstMonthLabel?: string
+}) {
+  const hasDelta = typeof delta === 'number'
+  const up = hasDelta && (delta as number) >= 0
+  return (
+    <div className="text-right">
+      <p className="text-[10px] font-medium uppercase tracking-wide text-slate-500">{label}</p>
+      <p className="mt-1 text-2xl font-bold leading-tight tabular-nums text-white">{value}</p>
+      {hasDelta ? (
+        <span className={cn(
+          'mt-1.5 inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[11px] font-semibold tabular-nums',
+          up ? 'bg-emerald-400/15 text-emerald-300' : 'bg-red-400/15 text-red-300',
+        )}>
+          {up ? '+' : ''}{(delta as number).toFixed(1)}%
+          <span className="font-normal text-slate-400">{deltaLabel}</span>
+        </span>
+      ) : (
+        firstMonthLabel && <span className="mt-1.5 inline-block text-[11px] text-slate-500">{firstMonthLabel}</span>
+      )}
     </div>
   )
 }
@@ -397,59 +430,57 @@ export function DashboardContent() {
   const _platformCommPct   = isDemo ? 5.1 : (kpi?.platformCommPct ?? 0)
   const anyPlatformEstimated = isDemo ? true : (kpi?.anyPlatformEstimated ?? true)
 
-  const todayColor = todayVsYesterday >= 0 ? 'text-emerald-400' : 'text-red-400'
-
   return (
     <div className="space-y-7">
 
       {/* ── Hero banner ──────────────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-6 py-6 shadow-lg">
-        <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full border border-indigo-500/10" />
-        <div className="pointer-events-none absolute -right-6 -top-6 h-32 w-32 rounded-full border border-indigo-500/15" />
-        <div className="pointer-events-none absolute right-8 bottom-0 h-20 w-20 rounded-full bg-indigo-600/10 blur-xl" />
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 px-5 py-6 shadow-hero ring-1 ring-white/10 sm:px-7 sm:py-7">
+        {/* Subtle dotted texture + soft indigo glow */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-50"
+          style={{
+            backgroundImage: 'radial-gradient(rgb(255 255 255 / 0.06) 1px, transparent 1px)',
+            backgroundSize: '16px 16px',
+          }}
+        />
+        <div aria-hidden className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-indigo-500/20 blur-3xl" />
 
-        <div className="relative flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="relative flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <div className="flex items-center gap-3 mb-1">
-              <p className="text-xs font-semibold uppercase tracking-widest text-indigo-400">
+            <div className="mb-2 flex items-center gap-2.5">
+              <span className="relative flex h-1.5 w-1.5" aria-hidden>
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              </span>
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-indigo-300/80">
                 {dateLabel}
               </p>
               {isDemo && <DemoBanner />}
             </div>
-            <h1 className="mt-1 text-xl font-bold text-white leading-snug">
+            <h1 className="text-xl font-bold leading-tight text-white sm:text-2xl">
               {t(greetingKey())}, {bizDisplayName}
             </h1>
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="mt-1.5 text-sm text-slate-400">
               {t('dashboard_overview')}
             </p>
           </div>
 
-          <div className="flex gap-4 sm:gap-6 shrink-0">
-            <div className="text-right">
-              <p className="text-[11px] font-medium text-slate-500 uppercase tracking-wide">
-                {t('sales_today_label')}
-              </p>
-              <p className="text-2xl font-bold text-white tabular-nums leading-tight">
-                {formatCurrency(todaySales)}
-              </p>
-              <p className={cn('text-xs font-semibold tabular-nums', todayColor)}>
-                {todayVsYesterday >= 0 ? '+' : ''}{todayVsYesterday.toFixed(1)}% {t('dashboard_vs_yesterday')}
-              </p>
-            </div>
-            <div className="w-px bg-slate-700" />
-            <div className="text-right">
-              <p className="text-[11px] font-medium text-slate-500 uppercase tracking-wide">
-                {t('sales_month_label')}
-              </p>
-              <p className="text-2xl font-bold text-white tabular-nums leading-tight">
-                {formatCurrency(monthSales)}
-              </p>
-              <p className={cn('text-xs font-semibold tabular-nums', monthSalesGrowth !== undefined && monthSalesGrowth >= 0 ? 'text-emerald-400' : 'text-red-400')}>
-                {monthSalesGrowth !== undefined
-                  ? `${monthSalesGrowth >= 0 ? '+' : ''}${monthSalesGrowth.toFixed(1)}% ${t('dashboard_vs_last_month')}`
-                  : t('dashboard_first_month')}
-              </p>
-            </div>
+          <div className="flex shrink-0 gap-5 sm:gap-7">
+            <HeroStat
+              label={t('sales_today_label')}
+              value={formatCurrency(todaySales)}
+              delta={todayVsYesterday}
+              deltaLabel={t('dashboard_vs_yesterday')}
+            />
+            <div className="w-px self-stretch bg-white/10" />
+            <HeroStat
+              label={t('sales_month_label')}
+              value={formatCurrency(monthSales)}
+              delta={monthSalesGrowth}
+              deltaLabel={t('dashboard_vs_last_month')}
+              firstMonthLabel={t('dashboard_first_month')}
+            />
           </div>
         </div>
       </div>
@@ -475,7 +506,7 @@ export function DashboardContent() {
       {/* ── KPI stat cards ────────────────────────────────────────────────────── */}
       <section className="space-y-3">
         <SectionHeader title={t('dashboard_key_numbers')} />
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
 
           <StatCard
             title={t('today_sales')}

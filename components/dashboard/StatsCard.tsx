@@ -45,7 +45,7 @@ export function StatsCard({
   const trendNegative = typeof trend === 'number' && trend < 0
 
   return (
-    <div className="rounded-xl bg-white p-5 shadow-card border border-gray-100">
+    <div className="rounded-2xl bg-white p-5 shadow-card border border-gray-100">
       <div className="flex items-start justify-between">
         <p className="text-sm font-medium text-gray-500">{title}</p>
         {icon && (

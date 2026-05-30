@@ -63,7 +63,7 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
   const txList  = useMock ? recentTransactions : (transactions ?? [])
 
   return (
-    <div className="rounded-xl bg-white ring-1 ring-gray-100 shadow-card overflow-hidden">
+    <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-card">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-gray-50 px-5 py-4">
         <div>

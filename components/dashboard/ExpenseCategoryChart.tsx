@@ -67,7 +67,7 @@ export function ExpenseCategoryChart({ data: realData, total: realTotal }: Expen
   const data = items.map(d => ({ ...d, label: isZh ? d.nameZh : d.name }))
 
   return (
-    <div className="flex flex-col gap-4 rounded-xl bg-white p-5 ring-1 ring-gray-100 shadow-card">
+    <div className="flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-card">
       <div>
         <h3 className="text-sm font-semibold text-gray-800">{t('dashboard_expense_breakdown')}</h3>
         <p className="mt-0.5 text-xs text-gray-400">

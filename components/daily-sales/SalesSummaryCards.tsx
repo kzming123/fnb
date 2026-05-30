@@ -22,7 +22,7 @@ function SummaryCard({ icon, iconBg, iconColor, label, value, sub, trendPct, tre
   const down = typeof trendPct === 'number' && trendPct < 0
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl bg-white p-4 ring-1 ring-gray-100 shadow-card hover:shadow-card-hover transition-shadow">
+    <div className="flex flex-col gap-3 rounded-2xl bg-white p-4 border border-gray-100 shadow-card hover:shadow-card-hover transition-shadow">
       <div className="flex items-start justify-between">
         <div className={cn('flex h-9 w-9 items-center justify-center rounded-xl', iconBg, iconColor)}>
           {icon}

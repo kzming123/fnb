@@ -173,7 +173,7 @@ export function OnboardingFlow({ businessId, initialName, initialType, initialPh
       )}
 
       {/* ── Card ─────────────────────────────────────────────────────────── */}
-      <div className="rounded-2xl bg-white ring-1 ring-gray-100 shadow-lg p-6 sm:p-7">
+      <div className="rounded-2xl bg-white border border-gray-100 shadow-lg p-6 sm:p-7">
 
         {/* Progress */}
         <ProgressBar step={step} />

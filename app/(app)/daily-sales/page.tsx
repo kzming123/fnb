@@ -342,7 +342,7 @@ function ChannelSplitCard({ entries, t }: { entries: SalesEntry[]; t: (k: Transl
   ]
 
   return (
-    <div className="rounded-xl bg-white p-5 ring-1 ring-gray-100 shadow-card">
+    <div className="rounded-2xl bg-white p-5 border border-gray-100 shadow-card">
       <h3 className="text-sm font-semibold text-gray-800">{t('sales_channel_section')}</h3>
       <p className="mt-0.5 text-xs text-gray-400 mb-4">{t('sales_month_label')}</p>
 
@@ -383,7 +383,7 @@ function TopDayCard({ entries, t }: { entries: SalesEntry[]; t: (k: TranslationK
     new Date(d + 'T00:00:00').toLocaleDateString('en-MY', { day: 'numeric', month: 'short' })
 
   return (
-    <div className="rounded-xl bg-white p-5 ring-1 ring-gray-100 shadow-card">
+    <div className="rounded-2xl bg-white p-5 border border-gray-100 shadow-card">
       <h3 className="text-sm font-semibold text-gray-800">{t('sales_month_label')} Highlights</h3>
       <p className="mt-0.5 text-xs text-gray-400 mb-4">{entries.length} days</p>
 

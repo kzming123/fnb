@@ -28,7 +28,7 @@ export function FoodCostDonut() {
   const { t, isZh } = useLanguage()
 
   return (
-    <div className="rounded-xl bg-white p-5 shadow-card border border-gray-100">
+    <div className="rounded-2xl bg-white p-5 shadow-card border border-gray-100">
       <div className="mb-4">
         <h3 className="text-sm font-semibold text-gray-800">{t('dashboard_food_cost_breakdown')}</h3>
         <p className="text-xs text-gray-400">

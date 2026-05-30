@@ -230,7 +230,7 @@ function CogsChart({ data }: { data: PnLData }) {
   const max = items[0].value
 
   return (
-    <div className="rounded-2xl bg-white ring-1 ring-gray-100 shadow-card p-5">
+    <div className="rounded-2xl bg-white border border-gray-100 shadow-card p-5">
       <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">
         {t('reports_cogs')}
       </p>
@@ -263,7 +263,7 @@ function TopSuppliersCard({ suppliers, totalCogs }: { suppliers: TopSupplierSumm
   const { t } = useLanguage()
 
   return (
-    <div className="rounded-2xl bg-white ring-1 ring-gray-100 shadow-card p-5">
+    <div className="rounded-2xl bg-white border border-gray-100 shadow-card p-5">
       <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">
         {t('pnl_top_suppliers')}
       </p>
@@ -615,7 +615,7 @@ export default function PnlReportPage() {
 
       {/* ── Idle ───────────────────────────────────────────────────────────── */}
       {pageState === 'idle' && (
-        <div className="flex flex-col items-center justify-center gap-5 rounded-2xl bg-white ring-1 ring-gray-100 shadow-card py-16 text-center px-6">
+        <div className="flex flex-col items-center justify-center gap-5 rounded-2xl bg-white border border-gray-100 shadow-card py-16 text-center px-6">
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50">
             <FileBarChart2 size={28} className="text-indigo-400" />
           </div>
@@ -763,7 +763,7 @@ export default function PnlReportPage() {
           </div>
 
           {/* P&L Statement ──────────────────────────────────────────────────── */}
-          <div className="rounded-2xl bg-white ring-1 ring-gray-100 shadow-card overflow-hidden">
+          <div className="rounded-2xl bg-white border border-gray-100 shadow-card overflow-hidden">
 
             {/* Document header */}
             <div className="bg-gray-900 px-6 py-5 text-center">

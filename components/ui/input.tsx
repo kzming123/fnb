@@ -34,10 +34,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             type={type}
             className={cn(
               'flex h-9 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm',
-              'placeholder:text-gray-400',
+              'placeholder:text-gray-400 hover:border-gray-300',
               'focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:border-indigo-400',
               'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-50',
-              'transition-shadow',
+              'transition-[box-shadow,border-color]',
               error && 'border-red-400 focus:ring-red-500',
               prefix && 'pl-7',
               suffix && 'pr-8',

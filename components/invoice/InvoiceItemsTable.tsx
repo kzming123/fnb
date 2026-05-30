@@ -50,7 +50,7 @@ export function InvoiceItemsTable({ items, onChange }: InvoiceItemsTableProps) {
   }
 
   return (
-    <div className="overflow-hidden rounded-xl ring-1 ring-gray-100">
+    <div className="overflow-hidden rounded-xl border border-gray-100">
       <div className="overflow-x-auto table-scroll">
         <table className="w-full text-xs min-w-[700px]">
           <thead>

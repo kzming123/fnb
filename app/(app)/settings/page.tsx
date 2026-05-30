@@ -26,7 +26,7 @@ function Section({
   children: React.ReactNode
 }) {
   return (
-    <div className="rounded-2xl bg-white ring-1 ring-gray-100 shadow-card overflow-hidden">
+    <div className="rounded-2xl bg-white border border-gray-100 shadow-card overflow-hidden">
       <div className="flex items-center gap-3 border-b border-gray-50 px-5 py-4">
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
           {icon}

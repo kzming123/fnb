@@ -33,8 +33,10 @@ const config: Config = {
         '2xl': '1rem',
       },
       boxShadow: {
-        card: '0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.07)',
-        'card-hover': '0 4px 12px 0 rgb(0 0 0 / 0.10)',
+        // Slate-tinted, layered shadows read more premium than flat black.
+        card:        '0 1px 2px 0 rgb(16 24 40 / 0.04), 0 1px 3px 0 rgb(16 24 40 / 0.06)',
+        'card-hover':'0 10px 28px -8px rgb(16 24 40 / 0.14), 0 2px 6px -2px rgb(16 24 40 / 0.08)',
+        hero:        '0 24px 48px -16px rgb(30 27 75 / 0.45)',
       },
     },
   },

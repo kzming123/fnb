@@ -42,7 +42,7 @@ export function RevenueChart() {
   const { t } = useLanguage()
 
   return (
-    <div className="rounded-xl bg-white p-5 shadow-card border border-gray-100">
+    <div className="rounded-2xl bg-white p-5 shadow-card border border-gray-100">
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h3 className="text-sm font-semibold text-gray-800">{t('dashboard_revenue_trend')}</h3>

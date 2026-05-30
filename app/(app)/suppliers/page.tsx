@@ -125,7 +125,7 @@ function SpendingAnalyticsSection({
 
   if (!hasData) {
     return (
-      <div className="rounded-2xl bg-white ring-1 ring-gray-100 shadow-card p-5 text-center">
+      <div className="rounded-2xl bg-white border border-gray-100 shadow-card p-5 text-center">
         <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">
           {t('sup_spending_analytics')}
         </p>
@@ -135,7 +135,7 @@ function SpendingAnalyticsSection({
   }
 
   return (
-    <div className="rounded-2xl bg-white ring-1 ring-gray-100 shadow-card p-5 space-y-5">
+    <div className="rounded-2xl bg-white border border-gray-100 shadow-card p-5 space-y-5">
       <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
         {t('sup_spending_analytics')}
       </p>
@@ -165,7 +165,7 @@ function SpendingAnalyticsSection({
         </div>
 
         {/* Last month */}
-        <div className="rounded-xl bg-gray-50 ring-1 ring-gray-100 p-3">
+        <div className="rounded-xl bg-gray-50 border border-gray-100 p-3">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-500">
             {t('sup_last_month_spend')}
           </p>
@@ -180,7 +180,7 @@ function SpendingAnalyticsSection({
         </div>
 
         {/* Invoice count */}
-        <div className="rounded-xl bg-gray-50 ring-1 ring-gray-100 p-3">
+        <div className="rounded-xl bg-gray-50 border border-gray-100 p-3">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-500">
             {t('sup_total_invoices')}
           </p>
@@ -193,7 +193,7 @@ function SpendingAnalyticsSection({
         </div>
 
         {/* Avg invoice */}
-        <div className="rounded-xl bg-gray-50 ring-1 ring-gray-100 p-3">
+        <div className="rounded-xl bg-gray-50 border border-gray-100 p-3">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-500">
             {t('sup_avg_invoice')}
           </p>
@@ -275,7 +275,7 @@ function SupplierCard({ supplier, t, onEdit, onDelete }: {
   const hasOutstanding = outstanding > 0
 
   return (
-    <div className="group relative rounded-2xl bg-white ring-1 ring-gray-100 shadow-card hover:shadow-md transition-shadow overflow-hidden">
+    <div className="group relative rounded-2xl bg-white border border-gray-100 shadow-card hover:shadow-md transition-shadow overflow-hidden">
       {/* Category colour strip */}
       <div className={cn('h-1 w-full', style.strip)} />
 
@@ -285,7 +285,7 @@ function SupplierCard({ supplier, t, onEdit, onDelete }: {
           {onEdit && (
             <button
               onClick={() => onEdit(supplier)}
-              className="flex h-7 w-7 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-gray-100 text-gray-400 hover:text-indigo-600 hover:ring-indigo-200 transition-colors"
+              className="flex h-7 w-7 items-center justify-center rounded-lg bg-white shadow-sm border border-gray-100 text-gray-400 hover:text-indigo-600 hover:ring-indigo-200 transition-colors"
               title="Edit supplier"
             >
               <Pencil size={12} />
@@ -294,7 +294,7 @@ function SupplierCard({ supplier, t, onEdit, onDelete }: {
           {onDelete && (
             <button
               onClick={() => onDelete(supplier.id)}
-              className="flex h-7 w-7 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-gray-100 text-gray-400 hover:text-red-500 hover:ring-red-200 transition-colors"
+              className="flex h-7 w-7 items-center justify-center rounded-lg bg-white shadow-sm border border-gray-100 text-gray-400 hover:text-red-500 hover:ring-red-200 transition-colors"
               title="Delete supplier"
             >
               <Trash2 size={12} />
@@ -716,7 +716,7 @@ export default function SuppliersPage() {
           <p className="text-2xl font-bold text-white tabular-nums">{suppliers.length}</p>
           <p className="mt-1 text-xs text-gray-400">{t('suppliers_total')}</p>
         </div>
-        <div className="rounded-2xl bg-white ring-1 ring-gray-100 shadow-card p-4 text-center">
+        <div className="rounded-2xl bg-white border border-gray-100 shadow-card p-4 text-center">
           <p className="text-xl font-bold text-indigo-600 tabular-nums">{formatCurrency(totalMonthly)}</p>
           <p className="mt-1 text-xs text-gray-500">{t('suppliers_total_monthly')}</p>
         </div>
@@ -745,7 +745,7 @@ export default function SuppliersPage() {
 
       {/* ── Top 5 Chart ──────────────────────────────────────────────────── */}
       {top5.length > 0 && (
-        <div className="rounded-2xl bg-white p-5 ring-1 ring-gray-100 shadow-card">
+        <div className="rounded-2xl bg-white p-5 border border-gray-100 shadow-card">
           <div className="flex items-center gap-2 mb-4">
             <ReceiptText size={15} className="text-indigo-500" />
             <h3 className="text-sm font-bold text-gray-800">{t('suppliers_top5_title')}</h3>

@@ -38,7 +38,7 @@ export function PaymentBreakdown() {
   ]
 
   return (
-    <div className="rounded-xl bg-white p-5 ring-1 ring-gray-100 shadow-card">
+    <div className="rounded-2xl bg-white p-5 border border-gray-100 shadow-card">
       <div className="mb-4">
         <h3 className="text-sm font-semibold text-gray-800">{t('sales_payment_chart_title')}</h3>
         <p className="mt-0.5 text-xs text-gray-400">{t('sales_payment_chart_sub')} · {formatCurrency(total)}</p>

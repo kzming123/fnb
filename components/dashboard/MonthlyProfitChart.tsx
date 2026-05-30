@@ -87,7 +87,7 @@ export function MonthlyProfitChart({ data: realData }: MonthlyProfitChartProps) 
     : null
 
   return (
-    <div className="flex flex-col gap-4 rounded-xl bg-white p-5 ring-1 ring-gray-100 shadow-card">
+    <div className="flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-card">
       <div className="flex items-start justify-between">
         <div>
           <h3 className="text-sm font-semibold text-gray-800">{t('dashboard_monthly_profit_trend')}</h3>

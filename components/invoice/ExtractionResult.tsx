@@ -151,7 +151,7 @@ export function ExtractionResult({
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
 
         {/* Left — editable invoice meta */}
-        <div className="lg:col-span-2 flex flex-col gap-5 rounded-2xl bg-white p-5 ring-1 ring-gray-100 shadow-card">
+        <div className="lg:col-span-2 flex flex-col gap-5 rounded-2xl bg-white p-5 border border-gray-100 shadow-card">
           <p className="text-xs font-bold uppercase tracking-wider text-gray-400">
             {t('invoice_meta_section')}
           </p>
@@ -278,7 +278,7 @@ export function ExtractionResult({
           <ConfidenceScore score={data.confidence} />
 
           {/* Mock API note */}
-          <div className="rounded-xl bg-gray-50 px-4 py-3 ring-1 ring-gray-100">
+          <div className="rounded-xl bg-gray-50 px-4 py-3 border border-gray-100">
             <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">
               {t('invoice_integration_note')}
             </p>
@@ -315,7 +315,7 @@ export function ExtractionResult({
       </div>
 
       {/* ── Items table ─────────────────────────────────────────────────────── */}
-      <div className="rounded-2xl bg-white p-5 ring-1 ring-gray-100 shadow-card">
+      <div className="rounded-2xl bg-white p-5 border border-gray-100 shadow-card">
         <p className="mb-4 text-xs font-bold uppercase tracking-wider text-gray-400">
           {t('invoice_items_section')}
           <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold text-gray-500 normal-case tracking-normal">

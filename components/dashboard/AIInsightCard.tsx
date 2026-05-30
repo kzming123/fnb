@@ -47,7 +47,7 @@ export function AIInsightCard({ isDemo = false }: AIInsightCardProps) {
   // Real users with no data see a placeholder instead of fake demo insights
   if (!isDemo) {
     return (
-      <div className="relative flex flex-col justify-center overflow-hidden rounded-xl ring-1 ring-indigo-200/50 shadow-card min-h-[240px]"
+      <div className="relative flex flex-col justify-center overflow-hidden rounded-2xl ring-1 ring-indigo-200/50 shadow-card min-h-[240px]"
         style={{ background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 55%, #6d28d9 100%)' }}
       >
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -79,7 +79,7 @@ export function AIInsightCard({ isDemo = false }: AIInsightCardProps) {
   }
 
   return (
-    <div className="relative flex flex-col overflow-hidden rounded-xl ring-1 ring-indigo-200/50 shadow-card"
+    <div className="relative flex flex-col overflow-hidden rounded-2xl ring-1 ring-indigo-200/50 shadow-card"
       style={{
         background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 55%, #6d28d9 100%)',
       }}
