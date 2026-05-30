@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { FileText, Loader2, ScanLine } from 'lucide-react'
+import { FileText, Loader2, ScanLine, Upload, Sparkles, CheckCircle2 } from 'lucide-react'
 
 import { InvoiceUploader }  from '@/components/invoice/InvoiceUploader'
 import { ScanningState }    from '@/components/invoice/ScanningState'
@@ -279,12 +279,14 @@ export default function InvoiceScannerPage() {
       {scanState === 'idle' && (
         <div className="grid grid-cols-3 gap-3">
           {[
-            { step: '1', icon: '📤', title: 'Upload',  sub: 'JPG, PNG or PDF' },
-            { step: '2', icon: '🤖', title: 'AI Reads', sub: t('invoice_scanning') },
-            { step: '3', icon: '✅', title: 'Verify & Save', sub: t('invoice_save_expense') },
+            { step: '1', Icon: Upload,       title: t('invoice_step_upload'), sub: t('invoice_step_upload_sub') },
+            { step: '2', Icon: Sparkles,     title: t('invoice_step_ai'),     sub: t('invoice_scanning') },
+            { step: '3', Icon: CheckCircle2, title: t('invoice_step_verify'), sub: t('invoice_save_expense') },
           ].map((s) => (
-            <div key={s.step} className="flex flex-col gap-2 rounded-2xl bg-white p-4 border border-gray-100 shadow-card text-center">
-              <span className="text-2xl">{s.icon}</span>
+            <div key={s.step} className="flex flex-col items-center gap-2 rounded-2xl border border-gray-100 bg-white p-4 text-center shadow-card">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                <s.Icon size={16} />
+              </span>
               <p className="text-xs font-bold text-gray-700">{s.title}</p>
               <p className="text-[11px] text-gray-400">{s.sub}</p>
             </div>
@@ -311,7 +313,7 @@ export default function InvoiceScannerPage() {
         histLoading ? (
           <div className="flex items-center justify-center gap-2 py-8 text-gray-400">
             <Loader2 size={15} className="animate-spin" />
-            <span className="text-xs">Loading history…</span>
+            <span className="text-xs">{t('loading_history')}</span>
           </div>
         ) : (
           <ScanHistoryList records={history} t={t} />

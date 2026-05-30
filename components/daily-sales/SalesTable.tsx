@@ -60,7 +60,7 @@ function ExpandedRow({ entry, t }: { entry: SalesEntry; t: (k: TranslationKey) =
 
           {/* Totals */}
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400 mb-1.5">Summary</p>
+            <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400 mb-1.5">{t('sales_summary')}</p>
             <div className="flex items-center justify-between py-0.5">
               <span className="text-xs text-gray-500">{t('sales_total_label')}</span>
               <span className="text-xs font-bold text-indigo-700 tabular-nums">{formatCurrency(entry.totalSales)}</span>
@@ -188,8 +188,8 @@ export function SalesTable({ entries, onEdit, onDelete }: SalesTableProps) {
             {/* Sub-header row */}
             <tr className="bg-gray-50/40 border-b border-gray-100">
               {/* Channel cols */}
-              <th className="px-2 py-2 text-right font-medium text-gray-500 whitespace-nowrap">Dine-in</th>
-              <th className="px-2 py-2 text-right font-medium text-gray-500 whitespace-nowrap">Takeaway</th>
+              <th className="px-2 py-2 text-right font-medium text-gray-500 whitespace-nowrap">{t('sales_col_dinein')}</th>
+              <th className="px-2 py-2 text-right font-medium text-gray-500 whitespace-nowrap">{t('sales_col_takeaway')}</th>
               <th className="px-2 py-2 text-right font-medium text-gray-500 whitespace-nowrap">Grab</th>
               <th className="px-2 py-2 text-right font-medium text-gray-500 whitespace-nowrap">Panda</th>
               <th className="px-2 py-2 text-right font-medium text-gray-500 whitespace-nowrap">Shopee</th>
@@ -231,7 +231,7 @@ export function SalesTable({ entries, onEdit, onDelete }: SalesTableProps) {
                             {formatDate(entry.date, 'en-MY', { day: 'numeric', month: 'short' })}
                           </p>
                           {isToday && (
-                            <span className="text-[10px] font-semibold text-indigo-500">TODAY</span>
+                            <span className="text-[10px] font-semibold text-indigo-500">{t('sales_today_badge')}</span>
                           )}
                           {entry.notes && !isToday && (
                             <span className="text-[10px] text-amber-500">★</span>

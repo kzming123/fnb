@@ -18,9 +18,10 @@ function CustomTooltip({ active, payload, label }: {
   payload?: Array<{ name: string; value: number; color: string }>
   label?: string
 }) {
+  const { t } = useLanguage()
   if (!active || !payload?.length) return null
   return (
-    <div className="rounded-xl border border-gray-100 bg-white px-4 py-3 shadow-lg text-xs">
+    <div className="rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-lg text-xs">
       <p className="mb-2 font-semibold text-gray-600">
         {label ? formatDate(label, 'en-MY', { day: 'numeric', month: 'short' }) : ''}
       </p>
@@ -39,7 +40,7 @@ function CustomTooltip({ active, payload, label }: {
         <>
           <div className="my-2 border-t border-gray-100" />
           <div className="flex items-center justify-between gap-4">
-            <span className="text-gray-400">Profit</span>
+            <span className="text-gray-400">{t('chart_profit')}</span>
             <span className={`font-bold ${(payload[0].value - payload[1].value) >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
               RM {(payload[0].value - payload[1].value).toLocaleString('en-MY')}
             </span>

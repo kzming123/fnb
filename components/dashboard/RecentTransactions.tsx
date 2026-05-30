@@ -100,7 +100,7 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
             <tr className="border-b border-gray-50 bg-gray-50/60">
               <th className="px-5 py-3 text-left text-xs font-medium text-gray-500">{t('date')}</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">{t('status')}</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Description</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">{t('tx_description')}</th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">{t('invoice_amount')}</th>
               <th className="px-5 py-3 text-left text-xs font-medium text-gray-500">{t('status')}</th>
             </tr>
@@ -166,10 +166,10 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
         <div className="flex items-center justify-between border-t border-gray-50 bg-gray-50/40 px-5 py-3">
           <div className="flex items-center gap-6 text-xs">
             <span className="text-gray-400">
-              {txList.filter((tx) => tx.amount > 0).length} {t('dashboard_type_sale').toLowerCase()}s
+              {txList.filter((tx) => tx.amount > 0).length} {t('dashboard_money_in')}
             </span>
             <span className="text-gray-400">
-              {txList.filter((tx) => tx.amount < 0).length} {t('nav_expenses').toLowerCase()}
+              {txList.filter((tx) => tx.amount < 0).length} {t('dashboard_money_out')}
             </span>
           </div>
           <div className="flex items-center gap-1.5 text-xs">

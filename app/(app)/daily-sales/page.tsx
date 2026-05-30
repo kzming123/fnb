@@ -384,8 +384,8 @@ function TopDayCard({ entries, t }: { entries: SalesEntry[]; t: (k: TranslationK
 
   return (
     <div className="rounded-2xl bg-white p-5 border border-gray-100 shadow-card">
-      <h3 className="text-sm font-semibold text-gray-800">{t('sales_month_label')} Highlights</h3>
-      <p className="mt-0.5 text-xs text-gray-400 mb-4">{entries.length} days</p>
+      <h3 className="text-sm font-semibold text-gray-800">{t('sales_highlights')}</h3>
+      <p className="mt-0.5 text-xs text-gray-400 mb-4">{entries.length} {t('sales_days')}</p>
 
       <div className="space-y-3">
         <div className="flex items-center justify-between rounded-lg bg-emerald-50 px-3 py-2">
@@ -407,7 +407,7 @@ function TopDayCard({ entries, t }: { entries: SalesEntry[]; t: (k: TranslationK
         <div className="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2">
           <div>
             <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">{t('sales_avg_daily_label')}</p>
-            <p className="text-xs text-gray-400">{entries.length} days</p>
+            <p className="text-xs text-gray-400">{entries.length} {t('sales_days')}</p>
           </div>
           <p className="text-sm font-bold text-gray-700 tabular-nums">{fmt(avg)}</p>
         </div>

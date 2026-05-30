@@ -35,7 +35,7 @@ function CustomTooltip({ active, payload, grandTotal }: {
   payload?:   Array<{ payload: ExpenseCategoryItem; value: number }>
   grandTotal: number
 }) {
-  const { isZh } = useLanguage()
+  const { t, isZh } = useLanguage()
   if (!active || !payload?.length) return null
   const d = payload[0].payload
   return (
@@ -45,7 +45,7 @@ function CustomTooltip({ active, payload, grandTotal }: {
       </p>
       <p className="text-gray-800 font-bold">{formatCurrency(d.amount)}</p>
       <p className="text-gray-400">
-        {grandTotal > 0 ? ((d.amount / grandTotal) * 100).toFixed(1) : '0.0'}% of total cost
+        {grandTotal > 0 ? ((d.amount / grandTotal) * 100).toFixed(1) : '0.0'}% {t('chart_of_total_cost')}
       </p>
     </div>
   )
