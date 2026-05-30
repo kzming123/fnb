@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Design tokens ──────────────────────────────────────────────────────── */
+@layer base {
+  :root {
+    --sidebar-width: 16rem;      /* 256 px — sync with lg:pl-64 in AppShell */
+    --topbar-height: 3.5rem;     /* 56 px — sync with h-14 in Topbar */
+    --radius: 0.75rem;
+  }
+
+  /* Global resets */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  /* Clean focus ring */
+  :focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 2px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: 'cv11', 'ss01';  /* Inter stylistic alternates */
+  }
+
+  /* Typography scale */
+  h1 { @apply text-2xl font-bold tracking-tight text-gray-900; }
+  h2 { @apply text-xl font-bold tracking-tight text-gray-900; }
+  h3 { @apply text-base font-semibold text-gray-800; }
+  h4 { @apply text-sm font-semibold text-gray-700; }
+}
+
+/* ─── Layout components ──────────────────────────────────────────────────── */
+@layer components {
+
+  /* ── Sidebar scrollbar (dark) ── */
+  .sidebar-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(51 65 85 / 0.5) transparent;
+  }
+  .sidebar-scroll::-webkit-scrollbar { width: 3px; }
+  .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+  .sidebar-scroll::-webkit-scrollbar-thumb {
+    background: rgb(51 65 85 / 0.5);
+    border-radius: 99px;
+  }
+
+  /* ── Table horizontal scrollbar ── */
+  .table-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+  }
+  .table-scroll::-webkit-scrollbar { height: 5px; }
+  .table-scroll::-webkit-scrollbar-track { background: #f8fafc; border-radius: 99px; }
+  .table-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+
+  /* ── Cards ── */
+  .card {
+    @apply rounded-xl bg-white border border-gray-100 shadow-card;
+  }
+  .card-hover {
+    @apply transition-shadow duration-200 hover:shadow-card-hover;
+  }
+
+  /* ── Page section header ── */
+  .page-header {
+    @apply mb-6 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between;
+  }
+  .page-title {
+    @apply text-lg font-bold text-gray-900;
+  }
+  .page-subtitle {
+    @apply text-sm text-gray-500;
+  }
+
+  /* ── Stat card value ── */
+  .stat-value {
+    @apply text-2xl font-bold tracking-tight tabular-nums;
+  }
+}
+
+/* ─── Utilities ──────────────────────────────────────────────────────────── */
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+
+  /* Hide scrollbar (visually) */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Glass topbar backdrop */
+  .topbar-glass {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
