@@ -182,20 +182,72 @@ function parseAiResponse(rawText: string): Omit<InvoiceExtraction, '_extractedAt
 // ║  No npm package required — uses native fetch against the REST API            ║
 // ╚══════════════════════════════════════════════════════════════════════════════╝
 
+/**
+ * PDF extraction via the OpenAI Responses API.
+ * Unlike Chat Completions, the Responses API accepts application/pdf as a
+ * native file input — no image conversion required.
+ */
+async function openAiExtractPdf(base64: string): Promise<InvoiceExtraction> {
+  const apiKey = process.env.OPENAI_API_KEY!
+
+  const response = await fetch('https://api.openai.com/v1/responses', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type':  'application/json',
+    },
+    body: JSON.stringify({
+      model:        'gpt-4o',
+      instructions: EXTRACTION_PROMPT,
+      text:         { format: { type: 'json_object' } },
+      input: [
+        {
+          role:    'user',
+          content: [
+            {
+              type:      'input_file',
+              filename:  'invoice.pdf',
+              file_data: `data:application/pdf;base64,${base64}`,
+            },
+            {
+              type: 'input_text',
+              text: 'Extract all invoice data from this PDF and return the JSON.',
+            },
+          ],
+        },
+      ],
+    }),
+  })
+
+  if (!response.ok) {
+    const errText = await response.text()
+    throw new Error(`OpenAI Responses API error ${response.status}: ${errText.slice(0, 300)}`)
+  }
+
+  const json = await response.json() as {
+    output: Array<{ type: string; content: Array<{ type: string; text: string }> }>
+  }
+
+  const rawText = json.output?.[0]?.content?.[0]?.text ?? ''
+  const extraction = parseAiResponse(rawText)
+
+  return {
+    ...extraction,
+    _extractedAt: new Date().toISOString(),
+    _rawText:     rawText,
+  }
+}
+
 async function openAiExtract(input: ExtractionInput): Promise<InvoiceExtraction> {
   const apiKey = process.env.OPENAI_API_KEY
   if (!apiKey) throw new Error('OPENAI_API_KEY is not set')
 
   const { base64, mimeType } = await toBase64AndMime(input)
 
-  // OpenAI Vision does not support PDF directly — PDF uploads need pre-conversion.
-  // For PDFs, either convert page 1 to JPEG server-side (e.g. via pdf2pic),
-  // or store in Supabase Storage and pass a fileUrl to a document AI provider instead.
+  // PDFs go through the Responses API which supports them natively.
+  // Images (JPG/PNG/WebP) use Chat Completions with image_url below.
   if (mimeType === 'application/pdf') {
-    throw new Error(
-      'PDF direct upload is not yet supported by the OpenAI Vision extractor. ' +
-      'Upload a JPG or PNG, or integrate a PDF-to-image conversion step.'
-    )
+    return openAiExtractPdf(base64)
   }
 
   // ── REAL AI MODEL CALL — OpenAI GPT-4o Vision API ────────────────────────

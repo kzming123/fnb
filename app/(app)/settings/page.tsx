@@ -99,31 +99,41 @@ export default function SettingsPage() {
 
   // ── Load real data from Supabase ──────────────────────────────────────────
   useEffect(() => {
-    if (bizLoading || !businessId || !userId) return
+    // Don't block on missing IDs — just stop loading so the page renders
+    if (!bizLoading && (!businessId || !userId)) {
+      setProfileLoading(false)
+      return
+    }
+    if (bizLoading) return
 
     async function load() {
-      const supabase = createClient()
-      const [bizRes, profileRes] = await Promise.all([
-        supabase
-          .from('businesses')
-          .select('business_name, business_type, phone, address')
-          .eq('id', businessId)
-          .single(),
-        supabase
-          .from('profiles')
-          .select('full_name, email')
-          .eq('id', userId)
-          .single(),
-      ])
-      setProfile({
-        businessName: (bizRes.data?.business_name as string) ?? '',
-        businessType: (bizRes.data?.business_type as string) ?? 'restaurant',
-        ownerName:    (profileRes.data?.full_name as string) ?? '',
-        email:        (profileRes.data?.email as string) ?? '',
-        phone:        (bizRes.data?.phone as string) ?? '',
-        address:      (bizRes.data?.address as string) ?? '',
-      })
-      setProfileLoading(false)
+      try {
+        const supabase = createClient()
+        const [bizRes, profileRes] = await Promise.all([
+          supabase
+            .from('businesses')
+            .select('business_name, business_type, phone, address')
+            .eq('id', businessId)
+            .single(),
+          supabase
+            .from('profiles')
+            .select('full_name, email')
+            .eq('id', userId)
+            .single(),
+        ])
+        setProfile({
+          businessName: (bizRes.data?.business_name as string) ?? '',
+          businessType: (bizRes.data?.business_type as string) ?? 'restaurant',
+          ownerName:    (profileRes.data?.full_name as string) ?? '',
+          email:        (profileRes.data?.email as string) ?? '',
+          phone:        (bizRes.data?.phone as string) ?? '',
+          address:      (bizRes.data?.address as string) ?? '',
+        })
+      } catch {
+        // Data load failed — still stop the spinner so the page is usable
+      } finally {
+        setProfileLoading(false)
+      }
     }
 
     load()

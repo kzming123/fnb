@@ -198,10 +198,12 @@ export default function InvoiceScannerPage() {
       setMatchState(ms)
       setExtracted({ ...result, supplierId: matched?.id ?? null })
       setScanState('extracted')
-    } catch {
+    } catch (err) {
       setScanState('idle')
       setUploadedFile(null)
-      toast.error(t('invoice_scan_error'))
+      // Show the real error so it is easier to debug deployment issues
+      const msg = err instanceof Error ? err.message : String(err)
+      toast.error(msg || t('invoice_scan_error'))
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, suppliers])
